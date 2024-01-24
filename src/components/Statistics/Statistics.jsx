@@ -1,5 +1,5 @@
 import { nanoid } from 'nanoid';
-import { Item, Key, Stat, StatList } from './Feedback.styled';
+import { Item, Key, Stat, StatList } from '../Feedback/Feedback.styled';
 
 export const Statistics = ({ stats, total, positivePercentage }) => {
   return (

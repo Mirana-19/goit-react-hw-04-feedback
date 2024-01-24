@@ -1,45 +1,39 @@
-import React, { Component } from 'react';
+import { useState } from 'react';
 import { FeedbackOptions, Notification, Section, Statistics } from 'components';
 
-export class App extends Component {
-  state = {
-    good: 0,
-    neutral: 0,
-    bad: 0,
-  };
+export function App() {
+  const [feedback, setFeedback] = useState({ good: 0, neutral: 0, bad: 0 });
 
-  onLeaveFeedback = key =>
-    this.setState(prevState => ({ [key]: prevState[key] + 1 }));
+  const onLeaveFeedback = key =>
+    setFeedback(prev => ({ ...prev, [key]: prev[key] + 1 }));
 
-  countTotalFeedback = () =>
-    Object.values(this.state).reduce((acc, value) => acc + value, 0);
+  const countTotalFeedback = () =>
+    Object.values(feedback).reduce((acc, value) => acc + value, 0);
 
-  countPositiveFeedbackPercentage = () =>
-    ((this.state.good / this.countTotalFeedback()) * 100).toFixed() + '%';
+  const countPositiveFeedbackPercentage = () =>
+    ((feedback.good / countTotalFeedback()) * 100).toFixed() + '%';
 
-  render() {
-    const total = this.countTotalFeedback();
-    return (
-      <>
-        <Section title="Please leave feedback">
-          <FeedbackOptions
-            options={Object.keys(this.state)}
-            onLeaveFeedback={this.onLeaveFeedback}
+  const total = countTotalFeedback();
+  return (
+    <>
+      <Section title="Please leave feedback">
+        <FeedbackOptions
+          options={Object.keys(feedback)}
+          onLeaveFeedback={onLeaveFeedback}
+        />
+      </Section>
+
+      {total >= 1 ? (
+        <Section title="Statistics">
+          <Statistics
+            stats={Object.entries(feedback)}
+            total={total}
+            positivePercentage={countPositiveFeedbackPercentage()}
           />
         </Section>
-
-        {total >= 1 ? (
-          <Section title="Statistics">
-            <Statistics
-              stats={Object.entries(this.state)}
-              total={total}
-              positivePercentage={this.countPositiveFeedbackPercentage()}
-            />
-          </Section>
-        ) : (
-          <Notification message="There is no feedback" />
-        )}
-      </>
-    );
-  }
+      ) : (
+        <Notification message="There is no feedback" />
+      )}
+    </>
+  );
 }
